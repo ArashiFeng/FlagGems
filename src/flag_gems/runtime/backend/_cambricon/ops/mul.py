@@ -25,6 +25,13 @@ def mul_func_scalar(x, y, inplace):
 def mul(A, B):
     logger.debug("GEMS_CAMBRICON MUL")
     if isinstance(A, torch.Tensor) and isinstance(B, torch.Tensor):
+        if A.device != B.device:
+            if A.dim() == 0:
+                assert A.device == torch.device("cpu"), "expect scalar tensor on cpu"
+                A = A.to(B.device)
+            elif B.dim() == 0:
+                assert B.device == torch.device("cpu"), "expect scalar tensor on cpu"
+                B = B.to(A.device)
         if A.shape != B.shape:
             A, B = torch.broadcast_tensors(A, B)
             A = A.clone()
@@ -42,6 +49,9 @@ def mul(A, B):
 def mul_(A, B):
     logger.debug("GEMS_CAMBRICON MUL_")
     if isinstance(B, torch.Tensor):
+        if B.device != A.device and B.dim() == 0:
+            assert B.device == torch.device("cpu"), "expect scalar tensor on cpu"
+            B = B.to(A.device)
         if A.shape != B.shape:
             A, B = torch.broadcast_tensors(A, B)
             A = A.clone()
