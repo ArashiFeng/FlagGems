@@ -140,7 +140,7 @@ def mm(a, b):
     UPCAST = (
         M * max(a.stride(0), c.stride(0)) >= 1 << 31
         or N * max(b.stride(1), c.stride(1)) >= 1 << 31
-        or K * max(a.stride(1), b.stride(0))
+        or K * max(a.stride(1), b.stride(0)) >= 1 << 31
     )
     # launch kernel
     grid = lambda META: (
@@ -185,7 +185,7 @@ def mm_out(a, b, *, out):
     UPCAST = (
         M * max(a.stride(0), c.stride(0)) >= 1 << 31
         or N * max(b.stride(1), c.stride(1)) >= 1 << 31
-        or K * max(a.stride(1), b.stride(0))
+        or K * max(a.stride(1), b.stride(0)) >= 1 << 31
     )
     # launch kernel
     grid = lambda META: (
